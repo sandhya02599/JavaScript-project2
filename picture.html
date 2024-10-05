@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture-in-Picture</title>
+    <style>
+        body, h1, video {
+           margin: 0;
+           padding: 0;
+        }
+
+    
+    body {
+        background-color: #f0f0f0; 
+        color: #333; 
+        font-family: Arial, sans-serif; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        height: 100vh; 
+    }
+
+    
+    h1 {
+        margin-bottom: 20px; 
+        font-size: 2.5rem;
+        color: #007BFF; 
+    }
+
+    
+    video {
+        width: 80%; 
+        height: 50%;
+        max-width: 600px; 
+        border: 2px solid #007BFF; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+        margin-bottom: 20px; 
+    }
+
+    
+    .button {
+        background-color: #007BFF; 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        padding: 10px 20px; 
+        cursor: pointer; 
+        font-size: 1rem; 
+        transition: background-color 0.3s; 
+    }
+
+    
+    .button:hover {
+        background-color: #0056b3; 
+    }
+
+    
+    .button:disabled {
+        background-color: #cccccc; 
+        cursor: not-allowed; 
+    }
+</style>
+
+    </style>
+</head>
+<body>
+    <h1>Picture-in-Picture</h1>
+    
+    <video id="myVideo" controls>
+        <source src="./video/video.mp4" type="video/mp4">
+    </video>
+    <div style="float: right;">
+        <button id="btnpiP" style="display: none;" type="button" class="button">Enter Picture-in-Picture</button>
+    </div>
+
+
+    <script>
+        const myVideo = document.querySelector("#myVideo");
+        const btnPip = document.querySelector("#btnPip");
+
+        if("pictureInPictureEnabled" in document){
+            btnPip.style.display = null;
+
+            btnPip.addEventListener("click", () =>{
+                if(document.pictureInPictureElement){
+                    document.exitPictureInPicture().catch(err =>{
+                        console.log(err);
+                    });
+                    return;
+                }
+
+                myVideo.requestPictureInPicture().catch(err =>{
+                    console.log(err);
+                });
+            });
+            myVideo.addEventListener("enterpictureinpicture", e =>{
+                e.pictureInPictureWindow.addEventListener("resize", () =>{
+                     console.log('Window Size: ${e.pictureInPictureWindow.width}x${e.pictureInPictureWindow.height}');
+                });
+
+                btnPip.textContent = "Leave Picture-in-Picture";
+            });
+
+            myVideo.addEventListener("leavepictureinpicture", e =>{
+                btnPip.textContent = "Enter Picture-in-Picture";
+            });
+        }
+    </script>
+</body>
+</html>
